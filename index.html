@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Quiz Concursos Pro</title>
+  <meta name="description" content="Quiz para concursos com 1000 questões sobre Poderes, Constituição Federal, STF, Senado, Câmara, processo legislativo e muito mais.">
+  <meta name="theme-color" content="#eef2fb">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%234361ee'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle'%3E%F0%9F%8F%9B%EF%B8%8F%3C/text%3E%3C/svg%3E">
+
+  <!-- Aplica o tema salvo antes da pintura (evita "piscar") -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('cq_theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="bg-orbs" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Quiz Concursos Pro">
+      <span class="brand-logo" aria-hidden="true">🏛️</span>
+      <span class="brand-name">Quiz Concursos <em>Pro</em></span>
+    </a>
+    <div class="topbar-right">
+      <span class="pill" id="bank-pill" title="Questões já vistas neste ciclo do banco">📚 <b id="bank-seen">0</b>/<span id="bank-total">1000</span></span>
+      <button class="theme-toggle" id="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Alternar modo escuro">
+        <span class="tt-icon tt-sun" aria-hidden="true">☀️</span>
+        <span class="tt-icon tt-moon" aria-hidden="true">🌙</span>
+        <span class="tt-knob" aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app" id="app">
+
+    <!-- ============ INÍCIO ============ -->
+    <section class="screen card hero" id="screen-start" aria-labelledby="hero-title">
+      <span class="badge">⚖️ Direito Constitucional · Concursos</span>
+      <h1 id="hero-title">Teste seus conhecimentos para o <span class="grad">concurso</span></h1>
+      <p class="lead">20 questões sorteadas de um banco com <b id="hero-total">1000</b> questões, com 5 alternativas, correção imediata e explicação de cada resposta.</p>
+
+      <ul class="chips" aria-label="Temas abordados">
+        <li>Poder Executivo</li><li>Poder Legislativo</li><li>Poder Judiciário</li><li>STF</li>
+        <li>Senado</li><li>Câmara</li><li>Brasília</li><li>Deputados, senadores e vereadores</li>
+        <li>Democracia</li><li>Constituição Federal</li><li>Emendas</li><li>Leis e decretos</li>
+        <li>Projeto de lei</li><li>Medida provisória</li><li>Votação no Senado</li>
+      </ul>
+
+      <div class="feature-row">
+        <div class="feature"><b>20</b><span>questões por quiz</span></div>
+        <div class="feature"><b>5</b><span>alternativas (A–E)</span></div>
+        <div class="feature"><b>💡</b><span>explicação em cada questão</span></div>
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="btn-start" type="button">Começar quiz <span aria-hidden="true">→</span></button>
+
+      <div class="bank-progress" aria-live="polite">
+        <div class="bp-head"><span>Progresso no banco de questões</span><b id="bp-text">0 / 1000</b></div>
+        <div class="progress thin"><div id="bp-bar"></div></div>
+        <p class="hint" id="bp-hint">Cada quiz traz questões inéditas até você completar todo o banco.</p>
+      </div>
+
+      <p class="history" id="history" hidden></p>
+    </section>
+
+    <!-- ============ QUIZ ============ -->
+    <section class="screen" id="screen-quiz" hidden aria-labelledby="q-text">
+      <div class="quiz-head">
+        <div class="qcount">Questão <b id="q-num">1</b> <span>de</span> <b id="q-total">20</b></div>
+        <div class="score-pill" aria-label="Placar">
+          <span title="Acertos">✅ <b id="s-hit">0</b></span>
+          <span class="sep"></span>
+          <span title="Erros">❌ <b id="s-miss">0</b></span>
+        </div>
+      </div>
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0" id="quiz-progress"><div id="bar"></div></div>
+
+      <article class="card qcard" id="qcard">
+        <span class="chip chip-cat" id="q-cat"></span>
+        <h2 id="q-text" class="q-text" tabindex="-1"></h2>
+
+        <div class="options" id="options" role="group" aria-label="Alternativas"></div>
+
+        <div class="feedback" id="feedback" hidden aria-live="polite">
+          <div class="fb-emoji" id="fb-emoji" aria-hidden="true"></div>
+          <div class="fb-body">
+            <strong id="fb-title"></strong>
+            <p id="fb-expl"></p>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-ghost" id="btn-quit" type="button">↺ Reiniciar</button>
+          <span class="kbd-hint" aria-hidden="true">Atalhos: A–E ou 1–5 · Enter</span>
+          <button class="btn btn-primary" id="btn-next" type="button" disabled>Próxima questão →</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ RESULTADO ============ -->
+    <section class="screen card result" id="screen-result" hidden aria-labelledby="r-title">
+      <div class="r-emoji" id="r-emoji" aria-hidden="true">🏆</div>
+      <h2 id="r-title" tabindex="-1">Resultado</h2>
+      <p class="lead" id="r-msg"></p>
+
+      <div class="chart-wrap">
+        <div class="chart-box">
+          <canvas id="chart" width="300" height="300" role="img" aria-label="Gráfico de acertos e erros"></canvas>
+        </div>
+        <div class="legend">
+          <div class="lg-item"><i class="dot dot-ok"></i><div><b id="lg-hit">0%</b><span id="lg-hit-n">0 acertos</span></div></div>
+          <div class="lg-item"><i class="dot dot-bad"></i><div><b id="lg-miss">0%</b><span id="lg-miss-n">0 erros</span></div></div>
+        </div>
+      </div>
+
+      <div class="actions center">
+        <button class="btn btn-primary btn-lg" id="btn-reset" type="button">🔄 Resetar e novo quiz</button>
+        <button class="btn btn-ghost" id="btn-review" type="button" aria-expanded="false" aria-controls="review">📋 Revisar respostas</button>
+      </div>
+
+      <div class="review" id="review" hidden></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Feito para quem estuda para concursos 💙 · Dados: Constituição Federal de 1988 e legislação correlata.</p>
+  </footer>
+
+  <!-- ============ POP-UP (modal) ============ -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-text">
+      <button class="modal-x" type="button" id="modal-x" aria-label="Fechar">✕</button>
+      <div class="modal-icon" id="modal-icon" aria-hidden="true">🎯</div>
+      <h3 id="modal-title"></h3>
+      <p id="modal-text"></p>
+      <div class="modal-actions" id="modal-actions"></div>
+    </div>
+  </div>
+
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+  <div id="fx-layer" aria-hidden="true"></div>
+
+  <script src="js/questions.js"></script>
+  <script src="js/confetti.js"></script>
+  <script src="js/chart.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
